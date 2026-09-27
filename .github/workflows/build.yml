@@ -16,6 +16,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: '3.24.5'
 
       - name: إنشاء سقالة Flutter كاملة ودمج الكود
         run: |
@@ -23,11 +24,6 @@ jobs:
           rm -rf wazen_project/lib
           cp -r extracted/wazen/lib wazen_project/lib
           cp extracted/wazen/pubspec.yaml wazen_project/pubspec.yaml
-
-      - name: إصلاح توافق حزمة intl
-        working-directory: wazen_project
-        run: |
-          sed -i 's|intl: \^0.19.0|intl: ^0.20.3|' pubspec.yaml
 
       - name: تثبيت الحزم
         working-directory: wazen_project
