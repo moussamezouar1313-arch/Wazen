@@ -1,0 +1,38 @@
+name: Build APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: فك ضغط ملف المشروع
+        run: unzip -o wazen_mvp_v0.1.zip -d extracted
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: إنشاء سقالة Flutter كاملة ودمج الكود
+        run: |
+          flutter create --platforms=android wazen_project
+          rm -rf wazen_project/lib
+          cp -r extracted/wazen/lib wazen_project/lib
+          cp extracted/wazen/pubspec.yaml wazen_project/pubspec.yaml
+
+      - name: تثبيت الحزم
+        working-directory: wazen_project
+        run: flutter pub get
+
+      - name: بناء APK
+        working-directory: wazen_project
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wazen-apk
+          path: wazen_project/build/app/outputs/flutter-apk/app-release.apk
