@@ -13,6 +13,12 @@ jobs:
       - name: فك ضغط ملف المشروع
         run: unzip -o wazen_mvp_v0.1.zip -d extracted
 
+      - name: تثبيت Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -24,6 +30,11 @@ jobs:
           rm -rf wazen_project/lib
           cp -r extracted/wazen/lib wazen_project/lib
           cp extracted/wazen/pubspec.yaml wazen_project/pubspec.yaml
+
+      - name: إصلاح استيراد ناقص في شاشة الإعدادات
+        working-directory: wazen_project
+        run: |
+          sed -i "\|import '../../widgets/glass_card.dart';|a import '../../models/models.dart';" lib/screens/settings/settings_screen.dart
 
       - name: تثبيت الحزم
         working-directory: wazen_project
